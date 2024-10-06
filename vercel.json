@@ -1,6 +1,13 @@
 {
   "builds": [
-    { "src": "src/Main.js", "use": "@vercel/node" }
+    {
+      "src": "src/index.html",
+      "use": "@vercel/static"
+    }
   ],
-  "outputDirectory": "dist"
+  "routes": [
+    { "src": "/", "dest": "/src/index.html" },
+    { "src": "/(.*)", "dest": "/src/index.html" }
+  ],
+  "outputDirectory": "src/dist"
 }
