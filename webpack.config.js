@@ -6,7 +6,7 @@ module.exports = {
     entry: './src/Main.js',
     output: {
         filename: 'bundle.js',
-        path: path.resolve(__dirname + '/src', 'dist'),
+        path: path.resolve(__dirname + '/src', 'public'),
     },
     mode: 'production',
     plugins: [
