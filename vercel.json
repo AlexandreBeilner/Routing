@@ -6,8 +6,8 @@
     }
   ],
   "routes": [
-    { "src": "/", "dest": "/src/index.html" },
-    { "src": "/(.*)", "dest": "/src/index.html" }
+    { "src": "/", "dest": "/src/index.html" }
   ],
-  "outputDirectory": "src/dist"
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "src"
 }
