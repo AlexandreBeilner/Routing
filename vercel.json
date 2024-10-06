@@ -3,5 +3,5 @@
     { "src": "/", "dest": "/src/index.html" }
   ],
   "buildCommand": "npm install && npm run build",
-  "outputDirectory": "public"
+  "outputDirectory": "src"
 }
