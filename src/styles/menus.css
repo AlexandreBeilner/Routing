@@ -1,0 +1,147 @@
+#bottom-sheet-menu {
+    height: 30vh;
+    width: 100%;
+    position: absolute;
+    bottom: -100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #ececec;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.3);
+    transition: bottom 0.3s ease-in-out;
+}
+
+
+#bottom-sheet-menu.expanded {
+    bottom: 0;
+}
+
+#header-bottom-sheet {
+    height: 20%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#body-bottom-sheet {
+    height: 80%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+
+#header-bottom-sheet span {
+    font-size: 18px;
+    color: #333;
+    font-weight: bold;
+}
+
+#routes-menu-container {
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    background-color: #ececec;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.distance-component {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    height: 5vh;
+}
+
+.label-distance {
+    color: black;
+    font-size: 16px;
+}
+
+.create-route-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 6vh;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.create-route-button.save {
+    width: 60%;
+    background-color: #2bb74c;
+}
+
+.create-route-button.exit {
+    width: 35%;
+    background-color: #de092c;
+}
+
+.create-route-button span {
+    color: white;
+    font-size: 18px;
+}
+
+.create-routes-bottom-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    gap: 8px;
+    box-sizing: border-box;
+}
+
+.create-routes-bottom-buttons.collapsed {
+    display: none;
+}
+
+.create-route-action-button {
+    min-height: 80px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-evenly;
+    flex-direction: column;
+    border-radius: 8px;
+    padding: 4px;
+    background-color: #2e63d1;
+}
+
+.create-route-action-button i {
+    color: white;
+    font-size: 20px;
+}
+
+.create-route-action-button span {
+    font-size: 14px;
+    color: white;
+    text-align: center;
+    font-weight: 800;
+}
+
+.resize-menu-button-container {
+    width: 40%;
+    height: 30px;
+    background-color: #ececec;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translate(-50%);
+    z-index: 12;
+}
