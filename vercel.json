@@ -1,0 +1,6 @@
+{
+  "builds": [
+    { "src": "src/Main.js", "use": "@vercel/node" }
+  ],
+  "outputDirectory": "dist"
+}
