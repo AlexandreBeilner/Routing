@@ -1,17 +1,15 @@
-import {route, utils} from "../../Globals";
+import {components, route, utils} from "../../Globals";
 
 export class CreateRoutesMenu {
 
     constructor(container) {
         this.container = container;
         this.distance = null;
-        this.hideBottomSheetMenu = this.hideBottomSheetMenu.bind(this);
         this.showBottomSheetMenu = this.showBottomSheetMenu.bind(this);
         this.saveRoute = this.saveRoute.bind(this);
     }
 
     init() {
-        this.hideBottomSheetMenu();
         route.createRouteIsActive = true;
 
         this.menuContainer = document.createElement('div');
@@ -45,15 +43,6 @@ export class CreateRoutesMenu {
         this.menuContainer.remove();
     }
 
-    hideBottomSheetMenu() {
-        const circleButton = document.getElementById('circle-button');
-        circleButton.classList.remove('up-button')
-        circleButton.classList.add('hide')
-
-        const bottomSheetMenu = document.getElementById('bottom-sheet-menu');
-        bottomSheetMenu.classList.remove('expanded')
-    }
-
     showBottomSheetMenu() {
         const circleButton = document.getElementById('circle-button');
         circleButton.classList.remove('hide')
@@ -76,72 +65,63 @@ export class CreateRoutesMenu {
     }
 
     createSaveButton() {
-        const saveButton = document.createElement('div');
-        saveButton.setAttribute('class', 'create-route-button save');
+        const button = components.button.createCircleButtonWithLabel({
+            icon: 'fa-regular fa-floppy-disk',
+            label: 'Salvar',
+            color: 'green',
+            event: () => {
+                console.log('cabar')
+            }
+        })
 
-        const buttonName = document.createElement('span')
-        buttonName.innerHTML = 'Salvar rota';
-
-        saveButton.appendChild(buttonName);
-        saveButton.addEventListener('click', this.saveRoute)
-        return saveButton;
+        return button;
     }
 
     createExitButton() {
-        const exitButton = document.createElement('div');
-        exitButton.setAttribute('class', 'create-route-button exit');
-
-        const buttonName = document.createElement('span')
-        buttonName.innerHTML = 'Sair';
-
-        exitButton.appendChild(buttonName);
-        exitButton.addEventListener('click', () => { this.exit() })
-        return exitButton;
+        const button = components.button.createCircleButtonWithLabel({
+            icon: 'fa-solid fa-arrow-right-from-bracket',
+            label: 'Sair',
+            color: 'red',
+            event: () => {
+                this.exit()
+            }
+        })
+        return button
     }
 
     createCompleteRouteButton() {
-        const completeRoute = document.createElement('div');
-        completeRoute.setAttribute('class', 'create-route-action-button');
+        const button = components.button.createCircleButtonWithLabel({
+            icon: 'fa-solid fa-thumbtack',
+            label: 'Completar caminho',
+            event: () => {
+                console.log('cabar')
+            }
+        })
 
-        const buttonName = document.createElement('span')
-        buttonName.innerHTML = 'Completar caminho';
-
-        const icon = document.createElement('i');
-        icon.setAttribute('class', 'fa-solid fa-thumbtack')
-
-        completeRoute.append(buttonName, icon);
-        completeRoute.addEventListener('click', this.exit)
-        return completeRoute;
+        return button;
     }
 
     createBackLastPointButton() {
-        const backLastPoint = document.createElement('div');
-        backLastPoint.setAttribute('class', 'create-route-action-button');
+        const button = components.button.createCircleButtonWithLabel({
+            icon: 'fa-solid fa-rotate-left',
+            label: 'Voltar ponto',
+            event: () => {
+                console.log('cabar')
+            }
+        })
 
-        const buttonName = document.createElement('span')
-        buttonName.innerHTML = 'Voltar ponto';
-
-        const icon = document.createElement('i');
-        icon.setAttribute('class', 'fa-solid fa-rotate-left')
-
-        backLastPoint.append(buttonName, icon);
-        backLastPoint.addEventListener('click', this.exit)
-        return backLastPoint;
+        return button;
     }
 
     createRestartButton() {
-        const restartButton = document.createElement('div');
-        restartButton.setAttribute('class', 'create-route-action-button');
-
-        const buttonName = document.createElement('span')
-        buttonName.innerHTML = 'Reiniciar';
-
-        const icon = document.createElement('i');
-        icon.setAttribute('class', 'fa-solid fa-repeat')
-
-        restartButton.append(buttonName, icon);
-        restartButton.addEventListener('click', this.exit)
-        return restartButton;
+        const button = components.button.createCircleButtonWithLabel({
+            icon: 'fa-solid fa-repeat',
+            label: 'Reiniciar',
+            event: () => {
+                console.log('cabar')
+            }
+        })
+        return button;
     }
 
     createResizeMenuButton() {

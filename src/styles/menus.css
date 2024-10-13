@@ -1,5 +1,4 @@
-#bottom-sheet-menu {
-    height: 30vh;
+.bottom-sheet {
     width: 100%;
     position: absolute;
     bottom: -100%;
@@ -12,29 +11,49 @@
     transition: bottom 0.3s ease-in-out;
 }
 
+.bottom-sheet.driver {
+    height: 30vh;
+}
 
-#bottom-sheet-menu.expanded {
+.bottom-sheet.passenger {
+    height: 18vh
+}
+
+.bottom-sheet.expanded {
     bottom: 0;
 }
 
-#header-bottom-sheet {
+.header-bottom-sheet {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.header-bottom-sheet.driver {
     height: 20%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
-#body-bottom-sheet {
-    height: 80%;
+.header-bottom-sheet.passenger {
+    height: 40%;
+}
+
+.body-bottom-sheet {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     flex-wrap: wrap;
-    gap: 10px;
+    padding: 12px;
 }
 
+.body-bottom-sheet.driver {
+    height: 80%;
+}
 
-#header-bottom-sheet span {
+.body-bottom-sheet.passenger {
+    height: 60%;
+}
+
+.header-bottom-sheet span {
     font-size: 18px;
     color: #333;
     font-weight: bold;
@@ -95,8 +114,8 @@
 .create-routes-bottom-buttons {
     width: 100%;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    justify-content: space-evenly;
+    align-items: start;
     padding: 8px;
     gap: 8px;
     box-sizing: border-box;
@@ -144,4 +163,42 @@
     left: 50%;
     transform: translate(-50%);
     z-index: 12;
+}
+
+.save-route-modal {
+    width: 90vw;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: #ececec;
+    border-radius: 12px;
+    padding: 12px;
+    box-sizing: border-box;
+    gap: 12px;
+}
+
+.bottom-sheet-save-route {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ececec;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    display: flex;
+    padding: 12px;
+    box-sizing: border-box;
+    box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.3);
+    align-items: center;
+}
+
+.bottom-sheet-save-route span {
+    flex: 1;
+    text-align: center;
+    font-size: 18px;
+    color: black;
 }

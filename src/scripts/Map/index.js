@@ -7,7 +7,7 @@ export class Map {
         this.map = null;
         this.directionsService = null;
         this.directionsRenderer = null;
-        this.polyline = null;
+        this.polylines = [];
         this.markers = [];
         this.waypoints = [];
         this.path = [];
@@ -47,7 +47,6 @@ export class Map {
             this.directionsRenderer.setMap(this.map);
 
             await this.createSearchBox(loader);
-            this.createPolyline();
         } catch (error) {
             console.error("Erro ao carregar a biblioteca Google Maps:", error);
         }
@@ -57,28 +56,9 @@ export class Map {
     initMapEvents() {
         this.map.addListener("click", (event) => {
             if (route.createRouteIsActive) {
-                this.drawRoute(event);
+                console.log('aaaaaaaaaaaaa')
             }
-            // const latLng = event.latLng;
-            //
-            // const marker = new google.maps.Marker({
-            //     position: latLng,
-            //     map: this.map,
-            //     label: `${this.markers.length + 1}`,
-            // });
-            //
-            // this.markers.push(marker);
-            //
-            // if (this.markers.length > 1) {
-            //     this.waypoints.push({
-            //         location: latLng,
-            //         stopover: true,
-            //     });
-            // }
-            //
-            // if (this.markers.length > 1) {
-            //     this.calculateAndDisplayRoute();
-            // }
+
         });
     }
 
@@ -113,109 +93,43 @@ export class Map {
         });
     }
 
-    createPolyline() {
-        this.polyline = new google.maps.Polyline({
-            path: this.path,
-            strokeColor: '#FF0000',
+    createPolyline(coordiantes) {
+        const backgroundPolyline = new google.maps.Polyline({
+            path: coordiantes,
+            strokeColor: '#0083a1',
             strokeOpacity: 1.0,
-            strokeWeight: 3,
+            strokeWeight: 9,
         });
 
-        this.polyline.setMap(this.map);
+        const polyline = new google.maps.Polyline({
+            path: coordiantes,
+            strokeColor: '#ffffff',
+            strokeOpacity: 1.0,
+            strokeWeight: 5,
+        });
+
+        backgroundPolyline.setMap(this.map);
+        polyline.setMap(this.map);
+        this.polylines.push(backgroundPolyline, polyline);
     }
 
-    drawRoute(event){
-        this.path.push(event.latLng);
-
-        this.polyline.setPath(this.path);
-
-        new google.maps.Marker({
-            position: event.latLng,
+    createMarker(coordinate, markerImage) {
+        const marker = new google.maps.Marker({
+            position: coordinate,
             map: this.map,
+            icon: {
+                url: `data:image/png;base64,${markerImage}`,
+                scaledSize: new google.maps.Size(50, 50),
+                anchor: new google.maps.Point(25, 50)
+            },
         });
+
     }
 
-    calculateAndDisplayRoute() {
-        const start = this.markers[0].getPosition();
-        const end = this.markers[this.markers.length - 1].getPosition();
-
-        const waypoints = this.waypoints.slice(1, this.waypoints.length - 1);
-
-        this.directionsService.route(
-            {
-                origin: start,
-                destination: end,
-                waypoints: waypoints,
-                travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (response, status) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-                    this.directionsRenderer.setDirections(response);
-                } else {
-                    console.error("Directions request failed due to " + status);
-                }
-            }
-        );
-    }
-
-    clearRoutes() {
-        this.markers.forEach(marker => marker.setMap(null));
-        this.markers = [];
-
-        this.directionsRenderer.setDirections({ routes: [] });
-
-        this.waypoints = [];
-    }
-
-    getBestRoute() {
-        this.clearRoutes();
-        const origin = { lat: utils.userPosition.latitude, lng: utils.userPosition.longitude };
-        this.directionsService.route(
-            {
-                origin: origin,
-                destination: this.universityPosition,
-                travelMode: google.maps.TravelMode.DRIVING,
-            },
-            (response, status) => {
-                if (status === google.maps.DirectionsStatus.OK) {
-                    console.log(response);
-                    this.directionsRenderer.setDirections(response);
-
-                    const route = response.routes[0];
-                    const coordinates = [];
-
-                    route.legs[0].steps.forEach(step => {
-                        coordinates.push({
-                            lat: step.start_location.lat(),
-                            lng: step.start_location.lng()
-                        });
-
-                        const path = step.path || step.lat_lngs;
-                        path.forEach(latlng => {
-                            coordinates.push({
-                                lat: latlng.lat(),
-                                lng: latlng.lng()
-                            });
-                        });
-
-                        coordinates.push({
-                            lat: step.end_location.lat(),
-                            lng: step.end_location.lng()
-                        });
-                    });
-
-                    //aqui eu tenho todas as coordenadas e se eu criar um polilyne da exatamente o trajeto
-                    console.log('Coordenadas extraídas:', coordinates);
-
-                } else {
-                    console.error("Directions request failed due to " + status);
-                }
-            }
-        );
-    }
-
-    enableCreateRouteMode() {
-
+    showRoute(coordinates) {
+        this.clearMap();
+        this.createPolyline(coordinates);
+        this.setMapCenter(coordinates[0]);
     }
 
     calculateCoordinatesDistance(coordinates) {
@@ -224,7 +138,7 @@ export class Map {
             const distance = google.maps.geometry.spherical.computeDistanceBetween(coordinates[i], coordinates[i + 1]);
             totalDistance += distance;
         }
-        return (totalDistance / 1000).toFixed(2) //km
+        return (totalDistance / 1000).toFixed(2)
     }
 
 
@@ -232,32 +146,71 @@ export class Map {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    const latitude = position.coords.latitude;
-                    const longitude = position.coords.longitude;
                     utils.userPosition = {
-                        latitude,
-                        longitude
+                        latitude: position.coords.latitude,
+                        longitude: position.coords.longitude
                     }
                     utils.hasGeolocation = true;
                 },
-                (error) => {
-                    switch (error.code) {
-                        case error.PERMISSION_DENIED:
-                            console.error("User denied the request for Geolocation.");
-                            break;
-                        case error.POSITION_UNAVAILABLE:
-                            console.error("Location information is unavailable.");
-                            break;
-                        case error.TIMEOUT:
-                            console.error("The request to get user location timed out.");
-                            break;
-                        case error.UNKNOWN_ERROR:
-                            console.error("An unknown error occurred.");
-                            break;
+                () => {
+                    utils.userPosition = {
+                        latitude: 0,
+                        longitude: 0
                     }
                     utils.hasGeolocation = false;
                 }
             );
         }
+    }
+
+    formatCoordinateArrayToPolyline(array) {
+        return array.map(item => {
+            return {lat: Number(item.latitude), lng: Number(item.longitude)};
+        })
+    }
+
+    setMapCenter(coordinates) {
+        this.map.setCenter(coordinates);
+        this.map.setZoom(16);
+    }
+
+    clearMap() {
+        this.polylines.map(item => {
+            item.setMap(null)
+        })
+    }
+
+    getBestRoute(origin) {
+        const request = {
+            origin: origin,
+            destination: this.universityPosition,
+            travelMode: google.maps.TravelMode.DRIVING,
+            provideRouteAlternatives: false,
+            unitSystem: google.maps.UnitSystem.METRIC,
+        };
+
+        return new Promise((resolve, reject) => {
+            this.directionsService.route(request, (response, status) => {
+                if (status === "OK") {
+                    this.routePoints = response.routes[0].overview_path;
+                    this.distance = this.calculateCoordinatesDistance(this.routePoints);
+                    this.showRoute(this.routePoints);
+                    resolve(this.distance);
+                } else {
+                    reject(status);
+                }
+            });
+        });
+    }
+
+    getRoutePoints() {
+        return this.routePoints.map(point => ({
+            lat: point.lat(),
+            lng: point.lng()
+        }));
+    }
+
+    getDistance() {
+        return this.distance;
     }
 }

@@ -20,8 +20,13 @@
     transition: bottom 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
-.expanded-button.up-button {
+.expanded-button.up-button-driver {
     bottom: calc(30vh + 15px);
+    transform: rotate(180deg);
+}
+
+.expanded-button.up-button-passenger {
+    bottom: calc(18vh + 15px);
     transform: rotate(180deg);
 }
 
@@ -43,10 +48,9 @@
 
 .medium-button {
     height: 36%;
-    width: 45%;
+    width: 48%;
     border-radius: 12px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
 .medium-button:hover {
@@ -54,15 +58,30 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
 }
 
-#generic-button.blue {
+.large-button {
+    flex: 1;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    min-height: 10vh;
+}
+
+.large-button.height-50 {
+    height: 50%;
+}
+
+.large-button.height-100 {
+    height: 100%;
+}
+
+.blue {
     background-color: #3a77d1;
 }
 
-#generic-button.orange {
+.orange {
     background-color: #e98b30;
 }
 
-#generic-button.green {
+.green {
     background-color: #2bb74c;
 }
 
@@ -79,4 +98,55 @@
 
 .large-button span {
     font-size: 20px !important;
+}
+
+.circle-button-with-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    width: 30%;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+.circle-button-with-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.circle-button-with-icon.blue {
+    background-color: #3498db;
+}
+
+.circle-button-with-icon.red {
+    background-color: #db3434;
+}
+
+.circle-button-with-icon.green {
+    background-color: #2bb74c;
+}
+
+.circle-button-with-icon i {
+    font-size: 24px;
+    color: white;
+}
+
+.circle-button-with-label span {
+    font-size: 14px;
+    color: #333;
+    margin-top: 8px;
+    text-align: center;
+    word-wrap: break-word;
+    white-space: normal;
+    max-width: 100%;
 }

@@ -1,9 +1,16 @@
 import { ButtonComponent } from "./scripts/Components/ButtonComponent";
 import {InputComponent} from "./scripts/Components/InputComponent";
+import {TipComponent} from "./scripts/Components/TipComponent";
+import {DarkBackground} from "./scripts/Components/DarkBackground";
+import {Spinner} from "./scripts/Components/Spinner";
 
 export const components = {
     button: new ButtonComponent(),
-    input: new InputComponent()
+    input: new InputComponent(),
+    tip: new TipComponent(),
+    darkBackground: new DarkBackground(),
+    alert: null,
+    spinner: new Spinner()
 }
 
 /**
@@ -16,7 +23,14 @@ export const components = {
  */
 
 /** @type {Utils} */
-export const utils = {};
+export const utils = {
+    userPosition: {
+        latitude: 0,
+        longitude: 0
+    },
+    map: null,
+    hasGeolocation: false
+};
 
 /**
  *
@@ -47,3 +61,19 @@ export const route = {
  * @type {Menus}
  */
 export const menus = {}
+
+/**
+ *
+ * @typedef {Object} UserConfig
+ * @property {string} iduser
+ * @property {string} isdriver
+ * @property {string} name
+ * @property {string} surname
+ * @property {string} userimage
+ */
+
+/**
+ *
+ * @type {UserConfig}
+ */
+export const userConfig = {}

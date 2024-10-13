@@ -1,3 +1,6 @@
+import {components, userConfig} from "../../Globals";
+import {FacDriveRoutes} from "../routes/FacDriveRoutes";
+
 export class MyRoutesScreen {
     constructor(container) {
         this.container = container;
@@ -8,6 +11,7 @@ export class MyRoutesScreen {
     init() {
         this.screen = document.createElement('div');
         this.screen.setAttribute('id', 'my-routes-screen');
+        this.screen.setAttribute('class', 'default-screen-style');
 
         const header = this.createHeader();
         const body = this.createBody();
@@ -17,12 +21,8 @@ export class MyRoutesScreen {
         this.screen.appendChild(body);
         this.screen.appendChild(footer);
 
-        this.darkBackground = document.createElement('div');
-        this.darkBackground.setAttribute('id', 'dark-background');
 
-        this.darkBackground.appendChild(this.screen);
-
-        this.container.appendChild(this.darkBackground);
+        components.darkBackground.create(this.container, this.screen);
     }
 
     createHeader() {
@@ -41,6 +41,19 @@ export class MyRoutesScreen {
     createBody() {
         const body = document.createElement('div');
         body.setAttribute('id', 'my-routes-body');
+        components.spinner.init(body);
+
+        FacDriveRoutes.getUserRoutes(userConfig.iduser).then((resp) => {
+            components.spinner.exit();
+            body.innerHTML = 'Você não possui nenhuma rota cadastrada! Para cadastrar aperte no botão "Criar rota" ou em "Melhor caminho" no menu inicial.'
+
+            if (resp.response.length === 0) {
+                body.innerHTML = 'Você não possui nenhuma rota cadastrada! Para cadastrar aperte no botão "Criar rota" ou em "Melhor caminho" no menu inicial.'
+                return;
+            }
+            console.log(resp);
+        })
+
         return body;
     }
 
@@ -54,15 +67,12 @@ export class MyRoutesScreen {
     }
 
     createExitButton() {
-        const button = document.createElement('div');
-        button.setAttribute('id', 'exit-my-routes-button');
-        button.addEventListener('click', () => this.exit());
-
-        const icon = document.createElement('i');
-        icon.setAttribute('class', 'fa-solid fa-x');
-
-        button.appendChild(icon);
-        return button;
+        return  components.button.createExitButton({
+            id: 'exit-my-routes-screen',
+            event: () => {
+                components.darkBackground.exit();
+            }
+        })
     }
 
     createSelectRouteButton() {
@@ -80,9 +90,4 @@ export class MyRoutesScreen {
         console.log('calabreso')
     }
 
-    exit() {
-        if (this.darkBackground) {
-            this.darkBackground.remove();
-        }
-    }
 }

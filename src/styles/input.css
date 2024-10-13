@@ -13,3 +13,53 @@
     outline: none;
     z-index: 5;
 }
+
+#input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#input-container label {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    text-align: center;
+}
+
+#input-container input {
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #777;
+    border-radius: 4px;
+    width: 90%;
+    outline: none;
+    transition: border-color 0.3s;
+    margin-top: 8px;
+    text-align: center;
+}
+
+#input-container .tip-component {
+    width: 90%;
+    padding: 12px;
+    border: 2px solid #bbbbbb;
+    border-radius: 8px;
+    margin-top: 8px;
+}
+
+.tip-component span {
+    color: #999999;
+    font-size: 14px;
+}
+
+.tip-component i {
+    font-size: 16px;
+    color: #999999;
+    margin-right: 8px;
+}
+
+#input-container input:focus {
+    border-color: #2e63d1;
+}

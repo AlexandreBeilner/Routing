@@ -1,4 +1,4 @@
-#my-routes-screen {
+.default-screen-style {
     position: absolute;
     height: 95vh;
     width: 100%;
@@ -7,16 +7,8 @@
     border-top-left-radius: 12px;
     border-top-right-radius: 12px;
     z-index: 10;
-}
-
-#dark-background {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    height: 100vh;
-    width: 100vw;
-    background-color: rgba(0, 0, 0, 0.2);
-    z-index: 11;
+    display: flex;
+    flex-direction: column;
 }
 
 #my-routes-header {
@@ -31,7 +23,7 @@
     font-size: 20px;
 }
 
-#exit-my-routes-button {
+.exit-screen-button {
     position: absolute;
     right: 10px;
     top: 10px;
@@ -41,7 +33,7 @@
     padding: 4px;
 }
 
-#exit-my-routes-button i {
+.exit-screen-button i {
     font-size: 16px;
     color: black;
 }
@@ -51,6 +43,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    padding: 12px;
+    font-size: 18px;
+    box-sizing: border-box;
 }
 
 #my-routes-footer {
@@ -73,4 +69,123 @@
 #select-route-button span {
     font-size: 20px;
     color: white;
+}
+
+.search-rider-container {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: 30%;
+}
+
+.content-rides-container {
+    flex: 1;
+    border-top: 1px solid black;
+    box-sizing: border-box;
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.content-rides-container span {
+    font-size: 16px;
+    font-weight: 800;
+    color: black;
+    text-align: center;
+}
+
+.content-rides-container .content-rides {
+    flex: 1
+}
+
+.content-rides {
+    display: flex;
+    flex-direction: column;
+}
+
+.content-rides.without-rides {
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.spinner {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.find-routes-result {
+    display: flex;
+    flex-direction: column;
+    background-color: #f9f9f9;
+    padding: 16px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease;
+    list-style-type: none;
+}
+
+.find-routes-result:hover {
+    background-color: #f1f1f1;
+}
+
+.user-name {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.user-distance {
+    font-size: 14px;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+.days-of-week-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.day-of-week {
+    font-size: 14px;
+    padding: 5px 10px;
+    background-color: #ececec;
+    border-radius: 4px;
+    color: #555;
+    transition: background-color 0.3s ease;
+}
+
+.day-of-week.going {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.show-user-route-button {
+    padding: 10px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.show-user-route-button:hover {
+    background-color: #2980b9;
 }
