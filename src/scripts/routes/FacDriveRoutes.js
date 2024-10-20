@@ -33,7 +33,6 @@ export class FacDriveRoutes {
     }
 
     static async saveRoute(userID, routeName, routePoints) {
-        console.log(userID, routeName, routePoints)
         const response = await fetch(this.BASE_URL + `/facdrive/router/save-route`, {
             method: 'POST',
             headers: {
@@ -44,6 +43,17 @@ export class FacDriveRoutes {
                 route: routePoints,
                 routeName
             })
+        });
+
+        return await response.json();
+    }
+
+    static async deleteRoute(routeID) {
+        const response = await fetch(this.BASE_URL + `/facdrive/router/delete-route?routeID=${routeID}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
         });
 
         return await response.json();

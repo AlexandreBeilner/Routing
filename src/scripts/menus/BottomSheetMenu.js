@@ -2,6 +2,8 @@ import {components, menus, userConfig, utils} from "../../Globals";
 import {MyRoutesScreen} from "../Screens/MyRoutesScreen";
 import {FindRideScreen} from "../Screens/FindRideScreen";
 import {FacDriveRoutes} from "../routes/FacDriveRoutes";
+import {FacDriveFunctions} from "../../FacDriveFunctions";
+import {SaveRouteModal} from "../Modals/SaveRouteModal";
 
 export class BottomSheetMenu {
     constructor(container) {
@@ -9,6 +11,8 @@ export class BottomSheetMenu {
         this.bottomSheet = null;
         this.expandedButton = null;
         this.expandedMenu = this.expandedMenu.bind(this);
+        this.saveRouteCallback = this.saveRouteCallback.bind(this);
+        this.toggleMenuVisibility = this.toggleMenuVisibility.bind(this);
         this.findRideScreen = new FindRideScreen(container);
     }
 
@@ -88,14 +92,14 @@ export class BottomSheetMenu {
             class: 'medium-button green',
             label: 'Melhor caminho',
             event: async () => {
-                let coordinates = {lat: utils.userPosition.latitude, lng: utils.userPosition.longitude};
-                if (! (utils.userPosition.longitude && utils.userPosition.latitude)) {
-                    const request = await FacDriveRoutes.getCoordinatesByUserAddress(userConfig.iduser);
-                    coordinates = {lat: request.response.latitude, lng: request.response.longitude};
-                }
-                await utils.map.getBestRoute(coordinates);
+                const coordinates = await FacDriveFunctions.getUserCoordinates();
+                const routePoints = await utils.map.setBestRoute(coordinates);
+                utils.map.createDestinationMarker()
+                utils.map.createOriginMarker(routePoints[0])
+                const distance = utils.map.calculateCoordinatesDistance(routePoints);
+                utils.map.showRoute(routePoints);
                 this.toggleMenuVisibility();
-                this.bottomSheetSaveRoute();
+                this.bottomSheetSaveRoute(distance);
             }
         }
         return components.button.genericButton(buttonOptions);
@@ -106,9 +110,12 @@ export class BottomSheetMenu {
             icon: 'fa-solid fa-plus',
             class: 'medium-button orange',
             label: 'Criar rota',
-            event: () => {
+            event: async () => {
                 this.toggleMenuVisibility();
                 menus.createRoutesMenu.init()
+                let coordinates = await FacDriveFunctions.getUserCoordinates();
+                utils.map.setMapCenter(coordinates);
+                utils.map.createDestinationMarker();
             }
         }
         return components.button.genericButton(buttonOptions);
@@ -146,56 +153,17 @@ export class BottomSheetMenu {
         this.expandedButton.classList.toggle(upButtonClass);
     }
 
-    createSaveRouteModal() {
-        const modal = document.createElement('div');
-        modal.setAttribute('class', 'save-route-modal');
-
-        const routeName = components.input.createInput({
-            label: 'Nome da rota',
-            input: {
-                id: 'route-name',
-                class: 'route-name',
-                type: 'text',
-                placeholder: 'Digite o nome da rota'
-            },
-            tip: "Digite um nome para a sua rota, dessa forma será possivel acessa-lá posteriormente."
-        })
-
-        const saveButton = components.button.genericButton({
-            icon: 'fa-regular fa-floppy-disk',
-            class: 'large-button height-50 green',
-            label: 'Salvar',
-            event: async () => {
-                const routeName = document.getElementById('route-name')?.value;
-                if (routeName) {
-                    const routePoints = utils.map.getRoutePoints();
-                    await FacDriveRoutes.saveRoute(userConfig.iduser, routeName, routePoints);
-                    components.alert.init('A sua rota foi salva com sucesso!', 'success');
-                    components.darkBackground.exit();
-                    this.toggleMenuVisibility();
-                    document.getElementById('bottom-sheet-save-route')?.remove();
-                    return;
-                }
-                components.alert.init('Preencha o nome da rota antes de salvar', 'error');
-            }
-        });
-
-        const exitButton = components.button.createExitButton({
-            id: 'exit-save-route-modal',
-            event: () => {
-                components.darkBackground.exit();
-            }
-        });
-
-        modal.append(exitButton, routeName, saveButton);
-        components.darkBackground.create(this.container, modal);
+    saveRouteCallback() {
+        this.toggleMenuVisibility();
+        document.getElementById('bottom-sheet-save-route')?.remove();
     }
 
-    bottomSheetSaveRoute() {
+    bottomSheetSaveRoute(distanceKM) {
         const container = document.createElement('div');
         container.setAttribute('id', 'bottom-sheet-save-route')
         container.setAttribute('class', 'bottom-sheet-save-route')
         const exitButton = components.button.createCircleButtonWithLabel({
+            buttonId: 'exit-bottom-sheet-menu-button',
             icon: 'fa-solid fa-arrow-right-from-bracket',
             label: 'Sair',
             color: 'red',
@@ -206,16 +174,17 @@ export class BottomSheetMenu {
             }
         })
         const saveButton = components.button.createCircleButtonWithLabel({
+            buttonId: 'save-bottom-sheet-menu-button',
             icon: 'fa-regular fa-floppy-disk',
             label: 'Salvar',
             color: 'green',
             event: () => {
-                this.createSaveRouteModal()
+                SaveRouteModal.init(this.saveRouteCallback, this.container, utils.map.getBestRoutePoints());
             }
         })
 
         const distance = document.createElement('span');
-        distance.innerText = `Distancia: ${utils.map.getDistance()} km`
+        distance.innerText = `Distancia: ${distanceKM} km`
 
         container.append(exitButton, distance, saveButton);
         this.container.appendChild(container);

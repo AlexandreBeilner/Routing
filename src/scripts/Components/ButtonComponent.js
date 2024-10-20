@@ -47,6 +47,8 @@ export class ButtonComponent {
 
         const button = document.createElement('div');
         button.setAttribute('class', 'circle-button-with-icon')
+        options.buttonClass && button.classList.add(options.buttonClass)
+        button.setAttribute('id', options.buttonId);
         button.classList.add(options.color ?? 'blue')
 
         button.addEventListener('click', options.event)

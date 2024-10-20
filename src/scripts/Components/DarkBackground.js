@@ -1,18 +1,20 @@
 export class DarkBackground {
-    create(container, element, tapToClose = false) {
-        this.background = document.createElement('div');
-        this.background.setAttribute('id', 'dark-background');
+
+    create(container, element, elementID, tapToClose = false) {
+        const background = document.createElement('div');
+        background.setAttribute('class', 'dark-background');
+        background.setAttribute('id', elementID);
 
         if (tapToClose) {
-            this.background.addEventListener('click', () => {
-                this.exit();
+            background.addEventListener('click', () => {
+                this.exit(elementID);
             });
         }
-        this.background.appendChild(element);
-        container.append(this.background);
+        background.appendChild(element);
+        container.append(background);
     }
 
-    exit() {
-        this.background.remove();
+    exit(elementID) {
+        document.getElementById(elementID)?.remove();
     }
 }

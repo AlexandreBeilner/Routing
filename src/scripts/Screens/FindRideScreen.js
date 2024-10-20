@@ -147,8 +147,8 @@ export class FindRideScreen {
         showRouteButton.innerText = 'Ver Rota';
         showRouteButton.addEventListener('click', async () => {
             const userRoute = await FacDriveRoutes.getCompleteRouteByRouteID(options.routeID);
-            const coordinates = utils.map.formatCoordinateArrayToPolyline(userRoute.response.routePoints);
-            utils.map.showRoute(coordinates, {lat: utils.userPosition.latitude, lng: utils.userPosition.longitude}, userConfig.userimage)
+            const coordinates = utils.map.formatCoordinateArrayToGoogleAPI(userRoute.response.routePoints);
+            utils.map.showRoute(coordinates)
             this.toggleVisibility();
         });
 
