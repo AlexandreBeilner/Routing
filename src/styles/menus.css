@@ -184,8 +184,8 @@
     left: 0;
     width: 100%;
     background-color: #ececec;
-    border-top-left-radius: 8px;
-    border-top-right-radius: 8px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
     display: flex;
     padding: 12px;
     box-sizing: border-box;

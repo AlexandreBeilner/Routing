@@ -1,14 +1,16 @@
-import {components, userConfig, utils} from "../../Globals";
+import {components, menus, route, userConfig, utils} from "../../Globals";
 import {FacDriveRoutes} from "../routes/FacDriveRoutes";
+import {FacDriveFunctions} from "../../FacDriveFunctions";
 
 export class MyRoutesScreen {
     constructor(container) {
         this.container = container;
         this.screen = null;
-        this.darkBackground = null;
+        this.init = this.init.bind(this);
     }
 
     init() {
+        FacDriveFunctions.togglePrincipalMenuVisibility('hide');
         this.screen = document.createElement('div');
         this.screen.setAttribute('id', 'my-routes-screen');
         this.screen.setAttribute('class', 'default-screen-style');
@@ -68,7 +70,7 @@ export class MyRoutesScreen {
                 components.genericModal.init(
                     this.container,
                     'Atenção',
-                    'Você tem certeza que deseja deletar essa rota. A Não terá como voltar atrás com essa ação.',
+                    'Você tem certeza que deseja deletar essa rota. Não terá como voltar atrás com essa ação.',
                     async () => {
                         const resp = await FacDriveRoutes.deleteRoute(item.idroute);
                         if (resp.status) {
@@ -96,18 +98,14 @@ export class MyRoutesScreen {
             const selectButton = document.createElement('button');
             selectButton.innerText = 'Ver caminho';
             selectButton.classList.add('route-select-btn');
+
             selectButton.addEventListener('click', () => {
-                utils.map.createOriginMarker(latLngArray[0])
-                utils.map.createDestinationMarker(latLngArray[latLngArray.length - 1]);
-                utils.map.showRoute(latLngArray);
                 components.darkBackground.exit('my-routes-screen-background');
+                FacDriveFunctions.togglePrincipalMenuVisibility('hide');
+                menus.bottomSheetSelectedRoute.init({route: item, backEvent: this.init});
             });
 
-            routeElement.appendChild(deleteRouteButton);
-            routeElement.appendChild(routeTitle);
-            routeElement.appendChild(nameElement);
-            routeElement.appendChild(distanceElement);
-            routeElement.appendChild(selectButton);
+            routeElement.append(deleteRouteButton, routeName, nameElement, distanceElement, selectButton);
 
             target.appendChild(routeElement);
         });
@@ -118,12 +116,9 @@ export class MyRoutesScreen {
             id: 'exit-my-routes-screen',
             event: () => {
                 components.darkBackground.exit('my-routes-screen-background');
+                FacDriveFunctions.togglePrincipalMenuVisibility('show');
             }
         })
-    }
-
-    _selectRoute() {
-        console.log('calabreso')
     }
 
 }

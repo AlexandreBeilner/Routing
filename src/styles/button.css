@@ -149,6 +149,14 @@
     background-color: #2bb74c;
 }
 
+.circle-button-with-icon.modern {
+    border: 1px solid black;
+}
+
+.circle-button-with-icon.modern i {
+    color: black;
+}
+
 .circle-button-with-icon i {
     font-size: 24px;
     color: white;

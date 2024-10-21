@@ -254,3 +254,45 @@
     color: #000000;
     right: 10px;
 }
+
+.bottom-sheet-selected-route {
+    position: absolute;
+    flex-direction: column;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #ececec;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    display: flex;
+    padding: 12px;
+    gap: 8px;
+    box-sizing: border-box;
+    box-shadow: 0 -6px 16px rgba(0, 0, 0, 0.3);
+    align-items: center;
+}
+
+.selected-route-name {
+    font-size: 20px;
+    font-weight: 800;
+}
+
+.buttons-container-selected-route {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 8px;
+}
+
+.start-button {
+    width: 80%;
+}
+
+.favorite {
+    border: 0 !important;
+    background-color: #e3e300 !important;
+}
+
+.favorite i {
+    color: white !important;
+}

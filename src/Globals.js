@@ -70,6 +70,7 @@ export const route = {
  * @typedef {Object} Menus
  * @property {BottomSheetMenu} bottomSheetMenu - instance of BottomSheet menu
  * @property {CreateRoutesMenu} createRoutesMenu - instance of CreateRoutesMenu menu
+ * @property {BottomSheetSelectedRoute} bottomSheetSelectedRoute - instance of BottomSheetSelectedRoute menu
  */
 
 /**

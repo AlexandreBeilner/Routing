@@ -5,6 +5,8 @@ import {BottomSheetMenu} from "./scripts/menus/BottomSheetMenu";
 import {CreateRoutesMenu} from "./scripts/menus/CreateRoutesMenu";
 import {FacDriveRoutes} from "./scripts/routes/FacDriveRoutes";
 import {Alert} from "./scripts/Components/Alert";
+import {FacDriveFunctions} from "./FacDriveFunctions";
+import {BottomSheetSelectedRoute} from "./scripts/menus/BottomSheetSelectedRoute";
 const container = document.getElementById('map-container');
 
 export class Main {
@@ -20,11 +22,17 @@ export class Main {
         utils.map = new Map(container);
         await utils.map.init();
 
-
+        const routeID = FacDriveFunctions.manegeRouteInLocalStorage('get');
+        menus.bottomSheetSelectedRoute = new BottomSheetSelectedRoute(container, routeID);
         menus.createRoutesMenu = new CreateRoutesMenu(container);
         menus.bottomSheetMenu = new BottomSheetMenu(container);
-        menus.bottomSheetMenu.init();
 
+        if (routeID) {
+            const resp = await FacDriveRoutes.getCompleteRouteByRouteID(routeID);
+            menus.bottomSheetSelectedRoute.init({route: resp.response, backEvent: menus.bottomSheetMenu.init.bind(menus.bottomSheetMenu)})
+        } else {
+            menus.bottomSheetMenu.init();
+        }
 
         utils.map.requestLocationPermission();
     }

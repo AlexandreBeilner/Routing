@@ -12,7 +12,9 @@ export class BottomSheetMenu {
         this.expandedButton = null;
         this.expandedMenu = this.expandedMenu.bind(this);
         this.saveRouteCallback = this.saveRouteCallback.bind(this);
-        this.toggleMenuVisibility = this.toggleMenuVisibility.bind(this);
+        this.createExpandedButton = this.createExpandedButton.bind(this);
+        this.createDriverMenu = this.createDriverMenu.bind(this);
+        this.createPassengerMenu = this.createPassengerMenu.bind(this)
         this.findRideScreen = new FindRideScreen(container);
     }
 
@@ -35,13 +37,6 @@ export class BottomSheetMenu {
 
     exit() {
         this.bottomSheet.remove();
-    }
-
-    toggleMenuVisibility() {
-        const circleButton = document.getElementById('circle-button');
-        circleButton.classList.toggle('up-button')
-        circleButton.classList.toggle('hide')
-        this.bottomSheet.classList.toggle('expanded')
     }
 
     createDriverMenu() {
@@ -98,7 +93,7 @@ export class BottomSheetMenu {
                 utils.map.createOriginMarker(routePoints[0])
                 const distance = utils.map.calculateCoordinatesDistance(routePoints);
                 utils.map.showRoute(routePoints);
-                this.toggleMenuVisibility();
+                FacDriveFunctions.togglePrincipalMenuVisibility('hide');
                 this.bottomSheetSaveRoute(distance);
             }
         }
@@ -111,7 +106,7 @@ export class BottomSheetMenu {
             class: 'medium-button orange',
             label: 'Criar rota',
             event: async () => {
-                this.toggleMenuVisibility();
+                FacDriveFunctions.togglePrincipalMenuVisibility('hide');
                 menus.createRoutesMenu.init()
                 let coordinates = await FacDriveFunctions.getUserCoordinates();
                 utils.map.setMapCenter(coordinates);
@@ -154,7 +149,7 @@ export class BottomSheetMenu {
     }
 
     saveRouteCallback() {
-        this.toggleMenuVisibility();
+        FacDriveFunctions.togglePrincipalMenuVisibility('show');
         document.getElementById('bottom-sheet-save-route')?.remove();
     }
 
@@ -168,7 +163,7 @@ export class BottomSheetMenu {
             label: 'Sair',
             color: 'red',
             event: () => {
-                this.toggleMenuVisibility();
+                FacDriveFunctions.togglePrincipalMenuVisibility('show');
                 container.remove();
                 utils.map.clearMap();
             }

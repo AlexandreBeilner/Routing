@@ -16,4 +16,29 @@ export class FacDriveFunctions {
         const element = document.getElementById(elementID);
         element.innerHTML = distance + " KM";
     }
+
+    static togglePrincipalMenuVisibility(visibility) {
+        if (visibility === 'show') {
+            const circleButton = document.getElementById('circle-button');
+            circleButton.classList.add('up-button');
+            circleButton.classList.remove('hide');
+            document.getElementById('bottom-sheet-menu')?.classList.add('expanded');
+            return;
+        }
+        const circleButton = document.getElementById('circle-button');
+        circleButton.classList.remove('up-button');
+        circleButton.classList.add('hide');
+        document.getElementById('bottom-sheet-menu')?.classList.remove('expanded');
+    }
+
+    static manegeRouteInLocalStorage(action, routeID) {
+        if (action === 'save') {
+            localStorage.setItem('routeID', `${routeID}`);
+            return;
+        }
+        if (action === 'get') {
+            return localStorage.getItem('routeID');
+        }
+        localStorage.removeItem('routeID');
+    }
 }
