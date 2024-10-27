@@ -6,12 +6,18 @@ export class DarkBackground {
         background.setAttribute('id', elementID);
 
         if (tapToClose) {
-            background.addEventListener('click', () => {
-                this.exit(elementID);
+            background.addEventListener('click', (e) => {
+                if(e.target === background) {
+                    this.exit(elementID);
+                }
             });
         }
         background.appendChild(element);
         container.append(background);
+    }
+
+    toggleVisibility(elementID) {
+        document.getElementById(elementID)?.classList.toggle('hide-background');
     }
 
     exit(elementID) {

@@ -21,6 +21,7 @@ export class MapLib {
             this.map = new Map(document.getElementById("map"), {
                 center: { lat: -27.093898594238937, lng: -52.6664602479717 },
                 zoom: 20,
+                minZoom: 5,
                 zoomControl: false,
                 mapTypeControl: false,
                 streetViewControl: false,

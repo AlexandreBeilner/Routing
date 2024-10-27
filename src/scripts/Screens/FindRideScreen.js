@@ -1,15 +1,12 @@
 import {components, userConfig, utils} from "../../Globals";
 import {FacDriveRoutes} from "../routes/FacDriveRoutes";
+import {FacDriveFunctions} from "../../FacDriveFunctions";
 
 export class FindRideScreen {
     constructor(container) {
         this.container = container;
     }
     init() {
-        if (this.screenContainer) {
-            this.toggleVisibility()
-            return;
-        }
         this.screenContainer = document.createElement('div');
         this.screenContainer.setAttribute('id', 'find-rider-screen');
         this.screenContainer.classList.add('default-screen-style');
@@ -26,26 +23,19 @@ export class FindRideScreen {
 
         this.screenContainer.append(searchRiderContainer, this.contentContainer);
 
-        this.darkBackground = document.createElement('div');
-        this.darkBackground.setAttribute('id', 'dark-background');
-        this.darkBackground.appendChild(this.screenContainer)
-
-        this.container.append(this.darkBackground);
+        components.darkBackground.create(this.container, this.screenContainer, 'dark-background-find-ride-screen', true);
     }
 
     exit() {
-        this.darkBackground.remove();
+        components.darkBackground.exit('dark-background-find-ride-screen');
     }
 
-    toggleVisibility() {
-        this.darkBackground.classList.toggle('hide');
-    }
 
     createExitButton() {
         const exitButton = components.button.createExitButton({
             id: 'exit-find-riders-screen',
             event: () => {
-                this.toggleVisibility();
+                this.exit();
             }
         })
         this.screenContainer.append(exitButton);
@@ -73,7 +63,7 @@ export class FindRideScreen {
             label: 'Buscar',
             event: async () => {
                 utils.map.requestLocationPermission();
-                const distance = document.getElementById('distance-input')?.value ?? 50
+                const distance = document.getElementById('distance-input')?.value || 50
 
                 components.spinner.init(this.contentRides);
                 const results = await FacDriveRoutes.getNearbyRoutes({
@@ -146,13 +136,79 @@ export class FindRideScreen {
         showRouteButton.setAttribute('class', 'show-user-route-button');
         showRouteButton.innerText = 'Ver Rota';
         showRouteButton.addEventListener('click', async () => {
+            FacDriveFunctions.togglePrincipalMenuVisibility('hide');
             const userRoute = await FacDriveRoutes.getCompleteRouteByRouteID(options.routeID);
             const coordinates = utils.map.formatCoordinateArrayToGoogleAPI(userRoute.response.routePoints);
+            utils.map.createDestinationMarker()
+            utils.map.createOriginMarker(coordinates[0])
             utils.map.showRoute(coordinates)
-            this.toggleVisibility();
+            components.darkBackground.toggleVisibility('dark-background-find-ride-screen');
+            this.createBottomSheetSelectDriverRoute(options);
         });
 
         component.append(userName, distance, daysOfWeekContainer, showRouteButton);
         return component;
+    }
+
+    createBottomSheetSelectDriverRoute(options) {
+        const container = document.createElement('div');
+        container.setAttribute('class', 'bottom-sheet-select-driver-route');
+
+        const actionButtons = document.createElement('div');
+        actionButtons.setAttribute('class', 'action-buttons-select-diver-route')
+
+        const buttonOptions = {
+            icon: 'fa-solid fa-circle-check',
+            class: 'large-button height-50 green start-button',
+            label: 'Selecionar carona',
+            event: async () => {
+                components.genericModal.init(
+                    this.container,
+                    'Selecionar Carona',
+                    'Ao clicar em confirmar será criado uma relação entre você e o motorista. Sempre que o motorista iniciar a corrida, você receberá uma notificação que ele está chegando.' +
+                    ' Tem certeza que deseja continuar?',
+                    () => {
+                        console.log('calabreso');
+                    }
+                    )
+            }
+
+        }
+        const selectRouteButton = components.button.genericButton(buttonOptions);
+
+        const exitButton = components.button.createCircleButtonWithLabel({
+            buttonId: 'exit-bottom-sheet-find-ride-button',
+            icon: 'fa-solid fa-arrow-right-from-bracket',
+            label: 'Sair',
+            color: 'red',
+            event: () => {
+                FacDriveFunctions.togglePrincipalMenuVisibility('show');
+                components.darkBackground.toggleVisibility('dark-background-find-ride-screen');
+                container.remove();
+                utils.map.clearMap();
+            }
+        })
+
+        actionButtons.append(selectRouteButton, exitButton);
+
+        const routeInfos = document.createElement('div');
+        routeInfos.setAttribute('class', 'driver-route-infos');
+
+        const driverName = document.createElement('span');
+        driverName.innerHTML = '<b>Motorista: </b>' + options.userName;
+        const routeDistance = document.createElement('span');
+        routeDistance.innerHTML = '<b>Distância até a carona: </b>' + options.distance;
+        const classDays = document.createElement('span');
+        classDays.innerHTML = '<b>Tem aula: </b>' + options.classDays
+            .filter(item => item.isGoing === true)
+            .reduce((acc, item, index, array) => {
+                return acc + item.name + (index < array.length - 1 ? ', ' : '');
+            }, '');
+
+        routeInfos.append(driverName, routeDistance, classDays);
+
+        container.append(routeInfos, actionButtons);
+
+        this.container.appendChild(container);
     }
 }

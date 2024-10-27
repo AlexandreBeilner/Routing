@@ -58,4 +58,17 @@ export class FacDriveRoutes {
 
         return await response.json();
     }
+
+    static async createRelationship(driverID, riderID) {
+        const resp = await fetch(this.BASE_URL + '/facdrive/user/create-relationship', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                driverID,
+                riderID
+            })
+        })
+    }
 }

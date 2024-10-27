@@ -15,7 +15,7 @@ export class Main {
         const params = new URLSearchParams(window.location.search);
         const userID = params.get('userID');
         //todo: remover o id padrão 81
-        const userConfig = await FacDriveRoutes.getUserConfig(userID ?? 2);
+        const userConfig = await FacDriveRoutes.getUserConfig(userID ?? 3);
         this.setUserConfig(userConfig.response[0]);
 
         components.input.createSearchBox(container);

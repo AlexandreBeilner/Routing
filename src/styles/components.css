@@ -9,6 +9,10 @@
     transition: 200ms bottom ease-in-out;
 }
 
+.dark-background.hide-background {
+    bottom: -100%;
+}
+
 .toast-alert {
     position: absolute;
     width: 90vw;
