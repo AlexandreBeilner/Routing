@@ -30,15 +30,4 @@ export class FacDriveFunctions {
         circleButton.classList.add('hide');
         document.getElementById('bottom-sheet-menu')?.classList.remove('expanded');
     }
-
-    static manegeRouteInLocalStorage(action, routeID) {
-        if (action === 'save') {
-            localStorage.setItem('routeID', `${routeID}`);
-            return;
-        }
-        if (action === 'get') {
-            return localStorage.getItem('routeID');
-        }
-        localStorage.removeItem('routeID');
-    }
 }

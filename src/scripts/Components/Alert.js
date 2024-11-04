@@ -26,7 +26,7 @@ export class Alert {
         alert.append(icon, alertMessage, progressBar);
         this.container.appendChild(alert);
 
-        const duration = 5000;
+        const duration = 8000;
 
         progressBar.style.transition = `width ${duration}ms linear`;
         setTimeout(() => {

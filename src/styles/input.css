@@ -1,5 +1,6 @@
 #pac-input {
     position: absolute;
+    min-height: 50px;
     top: 15px;
     left: 50%;
     transform: translate(-50%);
@@ -12,6 +13,10 @@
     font-size: 16px;
     outline: none;
     z-index: 5;
+}
+
+#pac-input.down {
+    top: 55px;
 }
 
 #input-container {

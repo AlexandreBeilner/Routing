@@ -1,5 +1,9 @@
-import {components, utils} from "../../Globals";
+import {components, facdriveSocket, userConfig, utils} from "../../Globals";
 import {FacDriveFunctions} from "../../FacDriveFunctions";
+import {FacDriveRoutes} from "../routes/FacDriveRoutes";
+import {StartRideModal} from "../Modals/StartRideModal";
+import {RunningScreen} from "../Screens/RunningScreen";
+import {ManageLocalStorage} from "../service/ManageLocalStorage";
 
 export class BottomSheetSelectedRoute {
     constructor(container, routeID) {
@@ -9,6 +13,7 @@ export class BottomSheetSelectedRoute {
         this.distance = null;
         this.routeName = null;
         this.setFavoriteRouteID = this.setFavoriteRouteID.bind(this);
+        this.initRide = this.initRide.bind(this);
     }
     init(options) {
         this.drawRoute(options.route);
@@ -24,7 +29,7 @@ export class BottomSheetSelectedRoute {
         const buttonsContainer = document.createElement('div');
         buttonsContainer.setAttribute('class', 'buttons-container-selected-route');
 
-        const startButton = this.createStartRouteButton();
+        const startButton = this.createStartRouteButton(options.route);
         const backButton = this.createBackButton(container, options.backEvent);
         const favoriteButton = this.createFavoriteButton();
 
@@ -32,6 +37,10 @@ export class BottomSheetSelectedRoute {
 
         container.append(label, buttonsContainer);
         this.container.appendChild(container);
+    }
+
+    exit() {
+        document.querySelector('.bottom-sheet-selected-route')?.remove();
     }
 
     createBackButton(container, event) {
@@ -71,7 +80,7 @@ export class BottomSheetSelectedRoute {
                             icon.classList.add('fa-solid');
                             icon.classList.add('fa-star');
                             buttonClickable.classList.add('favorite');
-                            FacDriveFunctions.manegeRouteInLocalStorage('save', this.selectedRouteID);
+                            ManageLocalStorage.manage('save', 'routeID', this.selectedRouteID)
                             this.setFavoriteRouteID(this.selectedRouteID);
                         })
                     return;
@@ -82,7 +91,7 @@ export class BottomSheetSelectedRoute {
                 icon.classList.add('fa-regular');
                 icon.classList.add('fa-star');
                 buttonClickable.classList.remove('favorite');
-                FacDriveFunctions.manegeRouteInLocalStorage('remove');
+                ManageLocalStorage.manage('delete', 'routeID');
                 this.setFavoriteRouteID(null);
             }
         });
@@ -95,16 +104,45 @@ export class BottomSheetSelectedRoute {
     }
 
     createStartRouteButton(route) {
+        const routeID = route.idroute;
+        const driverID = route.iduser;
         const buttonOptions = {
             icon: 'fa-solid fa-play',
             class: 'large-button height-50 blue start-button',
             label: 'Iniciar',
             event: async () => {
-                console.log('aaaaaaaaaaa')
+                const resp = await FacDriveRoutes.getRouteRiders(driverID, routeID);
+                if (resp.response && resp.response.length > 0) {
+                   (new StartRideModal()).init(this.container, resp.response, () => {
+                       facdriveSocket.sendMessageToUser({
+                           routeID, driverID,
+                           message: {
+                               text: 'SUA CARONA SAIU!',
+                               title: `O(A) motorista ${userConfig.name} ${userConfig.surname} sairá para a corrida em alguns instantes, fique pronto no local mais próximo a você. Uma boa viagem!`
+                           }
+                       })
+                       this.initRide(route, resp.response)
+                   });
+                   return;
+                }
+                this.initRide(route);
             }
 
         }
         return components.button.genericButton(buttonOptions);
+    }
+
+    initRide(route, riders = []) {
+        if (riders.length > 0) {
+            riders.forEach(item => {
+                const riderName = item.ridername + ' ' + item.ridersurname
+                utils.map.createRidersMarker({lat: Number(item.latitude), lng: Number(item.longitude)}, riderName);
+            })
+            components.darkBackground.exit('dark-background-start-ride-modal');
+            components.alert.init('Os caroneiros foram marcados no mapa em seus respesctivos locais!', 'success');
+        }
+        this.exit();
+        (new RunningScreen(this.container, riders, route)).init();
     }
 
     drawRoute(route) {

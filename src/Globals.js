@@ -94,3 +94,9 @@ export const menus = {}
  * @type {UserConfig}
  */
 export const userConfig = {}
+
+/**
+ *
+ * @type {WebSocketClient}
+ */
+export let facdriveSocket = null;

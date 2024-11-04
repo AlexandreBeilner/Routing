@@ -3,6 +3,7 @@ import {FacDriveFunctions} from "../../FacDriveFunctions";
 import {MapLib} from "./MapLib";
 import pinImage from 'images/pin.png';
 import arrivalImage from 'images/bandeira-branca.png';
+import riderImage from 'images/riderPin.png'
 
 
 export class Map {
@@ -166,11 +167,15 @@ export class Map {
     }
 
     createDestinationMarker(coordinates) {
-        this.mapLib.createMarker(coordinates ?? this.universityPosition, 40, arrivalImage);
+        this.mapLib.createMarker(coordinates ?? this.universityPosition, 40, arrivalImage, 'Destino');
     }
 
     createOriginMarker(coordinates) {
-        return this.mapLib.createMarker(coordinates, 30, pinImage);
+        return this.mapLib.createMarker(coordinates, 30, pinImage, 'Origem');
+    }
+
+    createRidersMarker(coordinates, label) {
+        return this.mapLib.createMarker(coordinates, 40, riderImage, label);
     }
 
     setCallback(callback) {

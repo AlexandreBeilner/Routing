@@ -167,8 +167,11 @@ export class FindRideScreen {
                     'Selecionar Carona',
                     'Ao clicar em confirmar será criado uma relação entre você e o motorista. Sempre que o motorista iniciar a corrida, você receberá uma notificação que ele está chegando.' +
                     ' Tem certeza que deseja continuar?',
-                    () => {
-                        console.log('calabreso');
+                    async () => {
+                        const resp = await FacDriveRoutes.createRelationship(options.userID, userConfig.iduser, options.routeID, options.nearbyPoint.lng, options.nearbyPoint.lat);
+                        if (resp.status) {
+                            components.alert.init(`Sucesso! Apartir de agora o ${options.userName} dará carona a você. Sempre que ele(a) sair você será notificado(a)!`, 'success');
+                        }
                     }
                     )
             }

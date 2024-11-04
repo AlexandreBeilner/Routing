@@ -95,7 +95,7 @@ export class MapLib {
         this.polylines.push(backgroundPolyline, polyline);
     }
 
-    createMarker(coordinate, size, markerImage) {
+    createMarker(coordinate, size, markerImage, label) {
         const marker = new google.maps.Marker({
             position: coordinate,
             map: this.map,
@@ -104,6 +104,13 @@ export class MapLib {
                 scaledSize: new google.maps.Size(size, size),
                 anchor: new google.maps.Point(size/2, size)
             },
+            label: {
+                text: label,
+                color: "#000000",
+                fontSize: "12px",
+                fontWeight: "bold",
+                className: 'markers-label-class'
+            }
         });
         this.markers.push(marker);
         return marker;
