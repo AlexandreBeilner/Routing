@@ -227,8 +227,7 @@ export class RunningScreen {
         return container;
     }
 
-    createActionButtonsToRider(options) {
-        console.log()
+    createActionButtonsToRider() {
         const notGoing = components.button.genericButton({
             icon: 'fa-solid fa-triangle-exclamation',
             class: 'large-button blue',
