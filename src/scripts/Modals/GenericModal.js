@@ -10,11 +10,12 @@ export class GenericModal {
         this.container = null;
     }
 
-    init(container, title, message, onConfirm) {
+    init(container, title, message, onConfirm, input = {}) {
         this.title = title;
         this.message = message;
         this.onConfirm = onConfirm;
         this.container = container;
+        this.input = input;
 
         this.createModal();
     }
@@ -49,6 +50,15 @@ export class GenericModal {
         messageElement.textContent = this.message;
         body.appendChild(messageElement);
 
+        if (Object.keys(this.input).length > 0) {
+            const input = document.createElement('input');
+            input.setAttribute('class', 'modal-input')
+            Object.keys(this.input).forEach(key => {
+                input.setAttribute(key, this.input[key]);
+            })
+            body.appendChild(input);
+        }
+
         this.modal.appendChild(body);
     }
 
@@ -66,6 +76,10 @@ export class GenericModal {
         const confirmButton = document.createElement('button');
         confirmButton.textContent = 'Confirmar';
         confirmButton.addEventListener('click', async () => {
+            if (Object.keys(this.input).length > 0 && ! document.querySelector(`#${this.input.id}`)?.value) {
+                components.alert.init('Preencha o campo de texto', 'error');
+                return;
+            }
             await this.onConfirm();
             components.darkBackground.exit('generic-modal-background');
         });

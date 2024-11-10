@@ -1,4 +1,7 @@
 import { io } from "socket.io-client";
+import {FacDriveFunctions} from "../../FacDriveFunctions";
+import {RunningScreen} from "../Screens/RunningScreen";
+import {components} from "../../Globals";
 
 export class WebSocketClient {
     constructor(userId) {
@@ -28,12 +31,26 @@ export class WebSocketClient {
         });
 
         this.socket.on("messageFromServer", (data) => {
-            console.log("Mensagem direta do servidor recebida:", data);
+            this.onReceiveMessageFromServer(JSON.parse(data));
         });
     }
 
-    sendMessage(message) {
-        this.socket.emit("message", JSON.stringify(message));
+    onReceiveMessageFromServer(data) {
+        const actionsType = {
+            startRide: async () => {
+                await FacDriveFunctions.startRideScreen(document.getElementById('map-container'));
+            },
+            endRideCanceled: () => {
+                RunningScreen.exit();
+                components.alert.init(data.text, 'error');
+            },
+            endRideSuccess: () => {
+                RunningScreen.exit();
+                components.alert.init(data.text, 'success');
+            }
+        }
+
+        actionsType[data.type] && actionsType[data.type]();
     }
 
     /**
@@ -45,27 +62,27 @@ export class WebSocketClient {
      * @param {string} data.message.title
      * @param {string} data.message.text
      */
-    sendMessageToUser(data) {
-        this.socket.emit("sendToUser", JSON.stringify(data));
+    rideManager(data) {
+        this.socket.emit("rideManager", JSON.stringify(data));
     }
 
-    // Método para executar quando conectado
+    /**
+     *
+     * @param {Object} data
+     * @param {string} data.driverID
+     * @param {Object} data.message
+     * @param {string} data.message.title
+     * @param {string} data.message.text
+     */
+    chooseRoute(data) {
+        this.socket.emit('chooseRoute', JSON.stringify(data));
+    }
+
     onConnect() {
-        console.log("Função onConnect chamada");
+        console.log("Conectado ao WebSocket");
     }
 
-    // Método para executar quando desconectado
     onDisconnect() {
-        console.log("Função onDisconnect chamada");
-    }
-
-    // Método para executar ao receber uma mensagem
-    onMessageReceived(data) {
-        console.log("Função onMessageReceived chamada com:", data);
-    }
-
-    // Método para executar ao receber um evento personalizado
-    onCustomEvent(data) {
-        console.log("Função onCustomEvent chamada com:", data);
+        console.log("Desconectado do WebSocket");
     }
 }

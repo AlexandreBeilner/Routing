@@ -8,11 +8,9 @@ import {ManageLocalStorage} from "../service/ManageLocalStorage";
 export class BottomSheetSelectedRoute {
     constructor(container, routeID) {
         this.container = container;
-        this.favoriteRouteID = routeID;
         this.selectedRouteID = null;
         this.distance = null;
         this.routeName = null;
-        this.setFavoriteRouteID = this.setFavoriteRouteID.bind(this);
         this.initRide = this.initRide.bind(this);
     }
     init(options) {
@@ -31,9 +29,8 @@ export class BottomSheetSelectedRoute {
 
         const startButton = this.createStartRouteButton(options.route);
         const backButton = this.createBackButton(container, options.backEvent);
-        const favoriteButton = this.createFavoriteButton();
 
-        buttonsContainer.append(startButton, favoriteButton, backButton);
+        buttonsContainer.append(startButton, backButton);
 
         container.append(label, buttonsContainer);
         this.container.appendChild(container);
@@ -57,52 +54,6 @@ export class BottomSheetSelectedRoute {
         })
     }
 
-    createFavoriteButton() {
-        const check = Number(this.favoriteRouteID) === Number(this.selectedRouteID);
-        const button = components.button.createCircleButtonWithLabel({
-            buttonClass: check ? 'favorite' : '',
-            buttonId: 'favorite-route-button',
-            icon:  check ? 'fa-solid fa-star' : 'fa-regular fa-star',
-            label: 'Favoritar',
-            color: 'modern',
-            event: () => {
-                const buttonClickable = button.firstChild;
-                const icon = buttonClickable.firstChild;
-
-                if (!buttonClickable.classList.contains('favorite')) {
-                    components.genericModal.init(
-                        this.container,
-                        'Favoritar',
-                        'Ao favorita uma rota, sempre que acessar essa tela ela irá aparecer. Deseja continuar?',
-                        () => {
-                            icon.classList.remove('fa-regular');
-                            icon.classList.remove('fa-star');
-                            icon.classList.add('fa-solid');
-                            icon.classList.add('fa-star');
-                            buttonClickable.classList.add('favorite');
-                            ManageLocalStorage.manage('save', 'routeID', this.selectedRouteID)
-                            this.setFavoriteRouteID(this.selectedRouteID);
-                        })
-                    return;
-                }
-
-                icon.classList.remove('fa-solid');
-                icon.classList.remove('fa-star');
-                icon.classList.add('fa-regular');
-                icon.classList.add('fa-star');
-                buttonClickable.classList.remove('favorite');
-                ManageLocalStorage.manage('delete', 'routeID');
-                this.setFavoriteRouteID(null);
-            }
-        });
-
-        return button;
-    }
-
-    setFavoriteRouteID(routeID) {
-        this.favoriteRouteID = routeID;
-    }
-
     createStartRouteButton(route) {
         const routeID = route.idroute;
         const driverID = route.iduser;
@@ -111,17 +62,19 @@ export class BottomSheetSelectedRoute {
             class: 'large-button height-50 blue start-button',
             label: 'Iniciar',
             event: async () => {
-                const resp = await FacDriveRoutes.getRouteRiders(driverID, routeID);
+                const resp = await FacDriveRoutes.getRouteRiders(driverID, routeID, 'any');
                 if (resp.response && resp.response.length > 0) {
                    (new StartRideModal()).init(this.container, resp.response, () => {
-                       facdriveSocket.sendMessageToUser({
+                       facdriveSocket.rideManager({
                            routeID, driverID,
                            message: {
+                               type: 'startRide',
                                text: 'SUA CARONA SAIU!',
                                title: `O(A) motorista ${userConfig.name} ${userConfig.surname} sairá para a corrida em alguns instantes, fique pronto no local mais próximo a você. Uma boa viagem!`
                            }
                        })
                        this.initRide(route, resp.response)
+                       FacDriveRoutes.setRunningStatus({driverID: route.iduser, routeID: route.idroute, status: 'true'});
                    });
                    return;
                 }
@@ -133,14 +86,6 @@ export class BottomSheetSelectedRoute {
     }
 
     initRide(route, riders = []) {
-        if (riders.length > 0) {
-            riders.forEach(item => {
-                const riderName = item.ridername + ' ' + item.ridersurname
-                utils.map.createRidersMarker({lat: Number(item.latitude), lng: Number(item.longitude)}, riderName);
-            })
-            components.darkBackground.exit('dark-background-start-ride-modal');
-            components.alert.init('Os caroneiros foram marcados no mapa em seus respesctivos locais!', 'success');
-        }
         this.exit();
         (new RunningScreen(this.container, riders, route)).init();
     }

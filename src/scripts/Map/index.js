@@ -50,29 +50,30 @@ export class Map {
     }
 
     requestLocationPermission() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    utils.userPosition = {
-                        latitude: position.coords.latitude,
-                        longitude: position.coords.longitude
-                    };
-                    utils.hasGeolocation = true;
-                },
-                () => {
-                    utils.userPosition = {
-                        latitude: 0,
-                        longitude: 0
-                    };
-                    utils.hasGeolocation = false;
-                },
-                {
-                    enableHighAccuracy: true,
-                    timeout: 10000,
-                    maximumAge: 0
-                }
-            );
-        }
+        return new Promise((resolve, reject) => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        utils.hasGeolocation = true;
+                        resolve({
+                            latitude: position.coords.latitude,
+                            longitude: position.coords.longitude
+                        });
+                    },
+                    () => {
+                        utils.hasGeolocation = false;
+                        resolve(false);
+                    },
+                    {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 0
+                    }
+                );
+            } else {
+                reject(new Error('Geolocation is not supported by this browser.'));
+            }
+        });
     }
 
     formatCoordinateArrayToGoogleAPI(array) {
@@ -158,7 +159,7 @@ export class Map {
         return (totalDistance / 1000).toFixed(2)
     }
 
-    setMapCenter(coordinates) {
+        setMapCenter(coordinates) {
         this.mapLib.setMapCenter(coordinates)
     }
 

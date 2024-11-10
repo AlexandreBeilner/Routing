@@ -81,6 +81,10 @@
     background-color: #2bb74c;
 }
 
+.red {
+    background-color: #c72727;
+}
+
 .medium-button:hover, .large-button:hover {
     transform: translateY(-3px);
     background-color: #1a55a0;
@@ -178,4 +182,10 @@
     box-shadow: none;
     opacity: 0.5;
     pointer-events: none;
+}
+
+.medium-button.unelected {
+    background-color: #cccccc;
+    color: #999999;
+    box-shadow: none;
 }

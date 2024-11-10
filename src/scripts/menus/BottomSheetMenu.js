@@ -1,9 +1,9 @@
 import {components, menus, userConfig, utils} from "../../Globals";
 import {MyRoutesScreen} from "../Screens/MyRoutesScreen";
 import {FindRideScreen} from "../Screens/FindRideScreen";
-import {FacDriveRoutes} from "../routes/FacDriveRoutes";
 import {FacDriveFunctions} from "../../FacDriveFunctions";
 import {SaveRouteModal} from "../Modals/SaveRouteModal";
+import {MyRidesScreen} from "../Screens/MyRidesScreen";
 
 export class BottomSheetMenu {
     constructor(container) {
@@ -61,14 +61,15 @@ export class BottomSheetMenu {
         this.bodyMenu.classList.add('body-bottom-sheet', 'passenger')
 
         const labelMenu = document.createElement('span');
-        labelMenu.innerHTML = 'Buscar por carona';
+        labelMenu.innerHTML = 'Menu de Caronas';
         this.headerMenu.append(labelMenu);
 
         this.bodyMenu.setAttribute('id', 'body-bottom-sheet')
 
         const findRideButton = this.createFindRideButton();
+        const myRidesButton = this.createMyRidesButton();
 
-        this.bodyMenu.append(findRideButton);
+        this.bodyMenu.append(findRideButton, myRidesButton);
     }
 
     createExpandedButton() {
@@ -130,11 +131,22 @@ export class BottomSheetMenu {
     createFindRideButton() {
         const buttonOptions = {
             icon: 'fa-solid fa-magnifying-glass',
-            class: 'large-button height-100 blue',
+            class: 'medium-button height-100 blue',
             label: 'Encontrar carona',
             event: () => {
                 this.findRideScreen.init();
             }
+        }
+        return components.button.genericButton(buttonOptions);
+    }
+
+    createMyRidesButton() {
+        const buttonOptions = {
+            icon: 'fa-solid fa-magnifying-glass',
+            class: 'medium-button height-100 blue',
+            label: 'Minhas Caronas',
+            event: async () => (new MyRidesScreen(this.container).init())
+
         }
         return components.button.genericButton(buttonOptions);
     }

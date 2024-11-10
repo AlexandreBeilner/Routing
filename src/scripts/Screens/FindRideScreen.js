@@ -1,10 +1,15 @@
-import {components, userConfig, utils} from "../../Globals";
+import {components, facdriveSocket, userConfig, utils} from "../../Globals";
 import {FacDriveRoutes} from "../routes/FacDriveRoutes";
 import {FacDriveFunctions} from "../../FacDriveFunctions";
+import {MyRidesScreen} from "./MyRidesScreen";
 
 export class FindRideScreen {
     constructor(container) {
         this.container = container;
+        this.locationCoorinates = {
+            longitude: utils.userPosition.longitude,
+            latitude: utils.userPosition.latitude
+        }
     }
     init() {
         this.screenContainer = document.createElement('div');
@@ -15,9 +20,10 @@ export class FindRideScreen {
         const searchRiderContainer = document.createElement('div');
         searchRiderContainer.setAttribute('class', 'search-rider-container');
         const distanceInput = this.createDistanceInput();
+        const locationButtons = this.createSelectLocationTypeButtons();
         const searchButton = this.createSearchButton();
 
-        searchRiderContainer.append(distanceInput, searchButton);
+        searchRiderContainer.append(distanceInput, locationButtons, searchButton);
 
         this.createContentContainer();
 
@@ -62,13 +68,12 @@ export class FindRideScreen {
             class: 'large-button height-50 blue',
             label: 'Buscar',
             event: async () => {
-                utils.map.requestLocationPermission();
                 const distance = document.getElementById('distance-input')?.value || 50
 
                 components.spinner.init(this.contentRides);
                 const results = await FacDriveRoutes.getNearbyRoutes({
-                    longitude: utils.userPosition.longitude,
-                    latitude: utils.userPosition.latitude,
+                    longitude: this.locationCoorinates.longitude,
+                    latitude: this.locationCoorinates.latitude,
                     userID: userConfig.iduser,
                     distance: distance
                 });
@@ -89,6 +94,47 @@ export class FindRideScreen {
         return components.button.genericButton(buttonOptions);
     }
 
+    createSelectLocationTypeButtons() {
+        const currentLocation = components.button.genericButton( {
+            icon: 'fa-solid fa-location-crosshairs',
+            class: 'medium-button green unelected',
+            label: 'Localização atual',
+            event: async () => {
+                const resp = await utils.map.requestLocationPermission();
+                if (!resp) {
+                    components.alert.init('Você precisa conceder acesso a sua localização','error');
+                    return;
+                }
+
+                currentLocation.classList.remove('unelected');
+                homeLocation.classList.add('unelected');
+                this.locationCoorinates = {
+                    longitude: resp.longitude,
+                    latitude: resp.latitude
+                }
+
+            }
+        })
+        const homeLocation = components.button.genericButton( {
+            icon: 'fa-solid fa-house',
+            class: 'medium-button green',
+            label: 'Meu endereço',
+            event: async () => {
+                homeLocation.classList.remove('unelected');
+                currentLocation.classList.add('unelected');
+                this.locationCoorinates = {
+                    longitude: utils.userPosition.longitude,
+                    latitude: utils.userPosition.latitude
+                }
+            }
+        })
+
+        const container = document.createElement("div");
+        container.setAttribute('class', 'location-button-container')
+        container.append(homeLocation, currentLocation);
+
+        return container;
+    }
     createContentContainer() {
         this.contentContainer = document.createElement('div');
         this.contentContainer.setAttribute('class', 'content-rides-container');
@@ -136,11 +182,14 @@ export class FindRideScreen {
         showRouteButton.setAttribute('class', 'show-user-route-button');
         showRouteButton.innerText = 'Ver Rota';
         showRouteButton.addEventListener('click', async () => {
+            utils.map.clearMap();
             FacDriveFunctions.togglePrincipalMenuVisibility('hide');
             const userRoute = await FacDriveRoutes.getCompleteRouteByRouteID(options.routeID);
             const coordinates = utils.map.formatCoordinateArrayToGoogleAPI(userRoute.response.routePoints);
+            const userPosition = await FacDriveFunctions.getUserPosition();
             utils.map.createDestinationMarker()
             utils.map.createOriginMarker(coordinates[0])
+            utils.map.createRidersMarker({lat: Number(userPosition.latitude), lng: Number(userPosition.longitude)}, 'Você');
             utils.map.showRoute(coordinates)
             components.darkBackground.toggleVisibility('dark-background-find-ride-screen');
             this.createBottomSheetSelectDriverRoute(options);
@@ -171,9 +220,18 @@ export class FindRideScreen {
                         const resp = await FacDriveRoutes.createRelationship(options.userID, userConfig.iduser, options.routeID, options.nearbyPoint.lng, options.nearbyPoint.lat);
                         if (resp.status) {
                             components.alert.init(`Sucesso! Apartir de agora o ${options.userName} dará carona a você. Sempre que ele(a) sair você será notificado(a)!`, 'success');
+                            this.exit();
+                            (new MyRidesScreen(this.container).init())
+                            facdriveSocket.chooseRoute({
+                                driverID: options.userID,
+                                message: {
+                                    type: 'newRider',
+                                    title: 'OPA! Você tem um novo caroneiro!',
+                                    text: `O(A) estudante ${userConfig.name} ${userConfig.surname} acabou de escolher a sua rota com padrão.`
+                                }
+                            })
                         }
-                    }
-                    )
+                    })
             }
 
         }

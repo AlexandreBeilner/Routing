@@ -59,6 +59,17 @@ export class FacDriveRoutes {
         return await response.json();
     }
 
+    static async deleteRelationship(key, value, routeID) {
+        const response = await fetch(this.BASE_URL + `/facdrive/user/delete-relationship?${key}=${value}&routeID=${routeID}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        return await response.json();
+    }
+
     static async createRelationship(driverID, riderID, routeID, longitude, latitude) {
         const resp = await fetch(this.BASE_URL + '/facdrive/user/create-relationship', {
             method: 'POST',
@@ -77,9 +88,35 @@ export class FacDriveRoutes {
         return await resp.json();
     }
 
-    static async getRouteRiders(driverID, routeID){
-        const resp = await fetch(this.BASE_URL + `/facdrive/router/get-riders-by-route?routeID=${routeID}&driverID=${driverID}`);
+    static async getRouteRiders(driverID, routeID, status = 'any'){
+        const resp = await fetch(this.BASE_URL + `/facdrive/router/get-riders-by-route?routeID=${routeID}&driverID=${driverID}&status=${status}`);
 
         return await resp.json()
+    }
+
+    static async getAddressCoordinates(userID) {
+        const resp = await fetch(this.BASE_URL + `/facdrive/user/get-coordinates-by-user-address?iduser=${userID}`);
+
+        return await resp.json();
+    }
+
+    static async setRunningStatus(data) {
+        await fetch(this.BASE_URL + '/facdrive/router/set-running-status', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        })
+    }
+
+    static async getRunningStatus(key, value, route) {
+        const resp = await fetch(this.BASE_URL + `/facdrive/router/get-running-status?${key}=${value}&routeID=${route}`);
+        const respParsed = await resp.json();
+
+        return respParsed.response[0];
+    }
+
+    static async getUserRelationships(key, value) {
+        const resp = await fetch(this.BASE_URL + `/facdrive/user/get-user-relationships?${key}=${value}`);
+        const respParsed = await resp.json();
+        return respParsed.response;
     }
 }
