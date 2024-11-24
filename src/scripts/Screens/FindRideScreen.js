@@ -227,7 +227,7 @@ export class FindRideScreen {
                                 message: {
                                     type: 'newRider',
                                     title: 'OPA! Você tem um novo caroneiro!',
-                                    text: `O(A) estudante ${userConfig.name} ${userConfig.surname} acabou de escolher a sua rota com padrão.`
+                                    text: `O(A) estudante ${userConfig.name} ${userConfig.surname} acabou de escolher a sua rota.`
                                 }
                             })
                         }

@@ -70,8 +70,9 @@ export class BottomSheetSelectedRoute {
                            message: {
                                type: 'startRide',
                                text: 'SUA CARONA SAIU!',
-                               title: `O(A) motorista ${userConfig.name} ${userConfig.surname} sairá para a corrida em alguns instantes, fique pronto no local mais próximo a você. Uma boa viagem!`
-                           }
+                               title: `O(A) motorista ${userConfig.name} ${userConfig.surname} sairá para a corrida em alguns instantes, fique pronto no local mais próximo a você. Uma boa viagem!`,
+                           },
+                           data: resp.response
                        })
                        this.initRide(route, resp.response)
                        FacDriveRoutes.setRunningStatus({driverID: route.iduser, routeID: route.idroute, status: 'true'});

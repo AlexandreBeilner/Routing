@@ -5,7 +5,7 @@ import {components} from "../../Globals";
 
 export class WebSocketClient {
     constructor(userId) {
-        this.socket = io("http://localhost:3000", {
+        this.socket = io("https://facdrive-socket.glitch.me", {
             transports: ['websocket'],
             query: { userId }
         });
@@ -61,6 +61,7 @@ export class WebSocketClient {
      * @param {Object} data.message
      * @param {string} data.message.title
      * @param {string} data.message.text
+     * @param {Object} data.data
      */
     rideManager(data) {
         this.socket.emit("rideManager", JSON.stringify(data));
